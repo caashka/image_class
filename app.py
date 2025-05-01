@@ -19,7 +19,7 @@ def get_prediction(image_data):
     try:
         # Отправка POST-запроса с изображением
         response = requests.post(
-            "http://127.0.0.1:8000/predict/",
+            "https://image-class-9vgx.onrender.com/predict/",
             files={"file": ("image.png", image_data, "image/png")}
         )
         response.raise_for_status()  # Проверка на наличие ошибок HTTP
