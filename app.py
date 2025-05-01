@@ -109,7 +109,10 @@ elif mode == "Нарисовать изображение":
                 # Отображение предсказания с увеличенным шрифтом
                 st.markdown(
                     f"<div style='display: flex; align-items: center; justify-content: center; height: 280px;'>"
-                    f"<h1 style='font-size: 48px;'>{prediction}</h1>"
+                    f"<h1 style='font-size: 48px;'>Ваш класс - {prediction['predicted_class']}</h1>"
+                    f"<h2 style='font-size: 32px;'>Кот - {round(prediction['probabilities'][0] * 100)}%</h2>"
+                    f"<h2 style='font-size: 32px;'>Собака - {round(prediction['probabilities'][1] * 100)}%</h2>"
+                    f"<h2 style='font-size: 32px;'>Панда - {round(prediction['probabilities'][2] * 100)}%</h2>"
                     f"</div>",
                     unsafe_allow_html=True
                 )
