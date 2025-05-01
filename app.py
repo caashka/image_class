@@ -85,8 +85,7 @@ elif mode == "Нарисовать изображение":
             fill_color="rgba(0, 0, 0, 0)",  # Цвет заливки (прозрачный)
             stroke_width=stroke_width,  # Толщина линии
             stroke_color=stroke_color,  # Цвет линии
-            background_color=bg_color,  # Цвет фона
-            update_streamlit=realtime_update,  # Обновление в реальном времени
+            background_color=bg_color,  # Цвет фона # Обновление в реальном времени
             height=280,  # Высота холста
             width=280,  # Ширина холста
             drawing_mode="freedraw",  # Режим рисования

@@ -9,12 +9,20 @@ import  cv2
 app = FastAPI()
 model = tf.keras.models.load_model('best_model.h5')
 
-def preprocess_image(img):
-    image = img.copy()
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    image = cv2.resize(image, (150, 150))
-    image = image.reshape((1, 150, 150, 3))
-    image = np.array(image, dtype="float32") / 255.0
+def preprocess_image(image):
+    # Преобразование в оттенки серого, если цветное изображение
+    if len(image.shape) == 3 and image.shape[2] == 3:
+        image = np.mean(image, axis=2)
+
+    # Изменение размера до 28x28
+    image = tf.image.resize(tf.expand_dims(image, -1), [150, 150])
+
+    # Нормализация значений пикселей [0, 1]
+    image = image / 255.0
+
+    # Добавление размерности батча
+    image = tf.expand_dims(image, 0)
+
     return image
 
 @app.post("/predict")
