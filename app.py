@@ -18,14 +18,12 @@ def get_prediction(image_data):
     """
     try:
         # Отправка POST-запроса с изображением
-        print('asdasd!!s')
         response = requests.post(
-            "http://127.0.0.1:8000/predict",
+            "https://image-class-9vgx.onrender.com/predict/",
             files={"file": ("image.png", image_data, "image/png")}
         )
-        print(response)
         response.raise_for_status()  # Проверка на наличие ошибок HTTP
-        return response.json()["prediction"]  # Возврат предсказания из ответа
+        return response.json()  # Возврат предсказания из ответа
     except requests.exceptions.RequestException as e:
         st.error(f"Ошибка при отправке запроса: {e}")  # Обработка ошибок запроса
     except ValueError as e:
@@ -84,7 +82,7 @@ elif mode == "Нарисовать изображение":
     with col1:
         # Создание интерактивного холста для рисования
         canvas_result = st_canvas(
-            fill_color="rgba(0, 0, 0, 0)",  # Цвет заливки (прозрачный)
+            fill_color="rgba(0, 0, 0)",  # Цвет заливки (прозрачный)
             stroke_width=stroke_width,  # Толщина линии
             stroke_color=stroke_color,  # Цвет линии
             background_color=bg_color,  # Цвет фона # Обновление в реальном времени
@@ -96,7 +94,7 @@ elif mode == "Нарисовать изображение":
 
     if canvas_result.image_data is not None:
         # Преобразование данных холста в изображение
-        image = Image.fromarray(canvas_result.image_data.astype('uint8'), 'RGBA')
+        image = Image.fromarray(canvas_result.image_data.astype('uint8'), 'RGB')
 
         # Преобразование изображения в байтовый поток
         img_byte_arr = io.BytesIO()
