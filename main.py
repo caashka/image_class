@@ -9,6 +9,7 @@ app = FastAPI()
 model = tf.keras.models.load_model('cnn_model.h5')
 
 def preprocess_image(image):
+    image = image.convert("RGB")
     image = tf.image.resize(image, [32, 32])
     image = tf.reshape(image, (1, 32, 32, 3))
     image = np.array(image, dtype="float32") / 255.0
