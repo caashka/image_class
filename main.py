@@ -4,7 +4,6 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 import io
-import cv2
 
 app = FastAPI()
 model = tf.keras.models.load_model('cnn_model.h5')
