@@ -6,7 +6,7 @@ from PIL import Image
 import io
 
 app = FastAPI()
-model = tf.keras.models.load_model('cnn_model.h5')
+model = tf.keras.models.load_model('best_model_on_keras.h5')
 
 def preprocess_image(image):
     image = image.convert("RGB")
