@@ -56,58 +56,6 @@ if mode == "Загрузить изображение":
             with col2:
                 # Отображение предсказания с увеличенным шрифтом
                 st.markdown(
-                    f"<div style='display: flex; align-items: center; justify-content: center; height: 100%;'>"
-                    f"<h1 style='font-size: 48px;'>{prediction}</h1>"
-                    f"</div>",
-                    unsafe_allow_html=True
-                )
-
-# Обработка режима "Нарисовать изображение"
-elif mode == "Нарисовать изображение":
-    # Настройки для холста
-    stroke_width = st.slider("Толщина линии:", 1, 25, 9)  # Выбор толщины линии
-
-    # Размещение выбора цвета линии и фона в одной строке
-    col_color1, col_color2 = st.columns(2)
-    with col_color1:
-        stroke_color = st.color_picker("Цвет линии:", "#FFFFFF")  # Выбор цвета линии
-    with col_color2:
-        bg_color = st.color_picker("Цвет фона:", "#000000")  # Выбор цвета фона
-
-    realtime_update = st.checkbox("Обновлять в реальном времени", True)  # Опция обновления в реальном времени
-
-    # Создание колонок для отображения холста и предсказания
-    col1, col2 = st.columns(2)
-
-    with col1:
-        # Создание интерактивного холста для рисования
-        canvas_result = st_canvas(
-            fill_color="rgba(0, 0, 0)",  # Цвет заливки (прозрачный)
-            stroke_width=stroke_width,  # Толщина линии
-            stroke_color=stroke_color,  # Цвет линии
-            background_color=bg_color,  # Цвет фона # Обновление в реальном времени
-            height=280,  # Высота холста
-            width=280,  # Ширина холста
-            drawing_mode="freedraw",  # Режим рисования
-            key="canvas",  # Уникальный ключ для холста
-        )
-
-    if canvas_result.image_data is not None:
-        # Преобразование данных холста в изображение
-        image = Image.fromarray(canvas_result.image_data.astype('uint8'), 'RGB')
-
-        # Преобразование изображения в байтовый поток
-        img_byte_arr = io.BytesIO()
-        image.save(img_byte_arr, format='PNG')
-        img_byte_arr = img_byte_arr.getvalue()
-
-        # Получение предсказания
-        prediction = get_prediction(img_byte_arr)
-
-        if prediction:
-            with col2:
-                # Отображение предсказания с увеличенным шрифтом
-                st.markdown(
                     f"<div style='display: flex;   flex-direction: column; flex-wrap: wrap;height: 500px;'>"
                     f"<h1 style='font-size: 48px;'>Ваш класс - {prediction['predicted_class']}</h1>"
                     f"<h2 style='font-size: 32px;'>Кот - {round(prediction['probabilities'][0] * 100)}%</h2>"
@@ -116,3 +64,93 @@ elif mode == "Нарисовать изображение":
                     f"</div>",
                     unsafe_allow_html=True
                 )
+
+# Обработка режима "Нарисовать изображение"
+elif mode == "Нарисовать изображение":
+    # Настройки для холста
+    stroke_width = st.slider("Толщина линии:", 1, 25, 9)
+
+    # Размещение выбора цвета линии и фона
+    col_color1, col_color2 = st.columns(2)
+    with col_color1:
+        stroke_color = st.color_picker("Цвет линии:", "#FFFFFF")
+    with col_color2:
+        bg_color = st.color_picker("Цвет фона:", "#000000")
+
+    realtime_update = st.checkbox("Обновлять в реальном времени", True)
+
+    # Инициализация состояния для управления холстом
+    if 'canvas_key' not in st.session_state:
+        st.session_state.canvas_key = 0
+    if 'history' not in st.session_state:
+        st.session_state.history = []
+    if 'history_index' not in st.session_state:
+        st.session_state.history_index = -1
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        # Холст для рисования
+        canvas_result = st_canvas(
+            fill_color="rgba(0, 0, 0, 0)",
+            stroke_width=stroke_width,
+            stroke_color=stroke_color,
+            background_color=bg_color,
+            height=280,
+            width=280,
+            drawing_mode="freedraw",
+            key=f"canvas_{st.session_state.canvas_key}",
+        )
+
+        # Кнопки управления холстом
+        col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
+        with col_btn1:
+            if st.button("Стереть всё"):
+                st.session_state.canvas_key += 1
+                st.session_state.history = []
+                st.session_state.history_index = -1
+        with col_btn2:
+            if st.button("← Назад") and st.session_state.history_index > 0:
+                st.session_state.history_index -= 1
+                st.session_state.canvas_key += 1
+        with col_btn3:
+            if st.button("Вперед →") and st.session_state.history_index < len(st.session_state.history) - 1:
+                st.session_state.history_index += 1
+                st.session_state.canvas_key += 1
+
+        # Кнопка классификации при отключенном реальном времени
+        if not realtime_update:
+            if st.button("Классифицировать"):
+                st.session_state.force_predict = True
+
+    # Логика обработки изображения
+    if canvas_result.image_data is not None:
+        if realtime_update or st.session_state.get('force_predict', False):
+            # Сохранение текущего состояния в историю
+            current_image = Image.fromarray(canvas_result.image_data.astype('uint8'), 'RGBA')
+            if len(st.session_state.history) == 0 or current_image != st.session_state.history[-1]:
+                st.session_state.history = st.session_state.history[:st.session_state.history_index + 1]
+                st.session_state.history.append(current_image)
+                st.session_state.history_index = len(st.session_state.history) - 1
+
+            # Преобразование изображения и получение предсказания
+            img = Image.fromarray(canvas_result.image_data.astype('uint8'), 'RGB')
+            img_byte_arr = io.BytesIO()
+            img.save(img_byte_arr, format='PNG')
+
+            prediction = get_prediction(img_byte_arr.getvalue())
+
+            if prediction:
+                with col2:
+                    st.markdown(
+                        f"<div style='display: flex; flex-direction: column; height: 280px;'>"
+                        f"<h1 style='font-size: 36px;'>Результат: {prediction['predicted_class']}</h1>"
+                        f"<p style='font-size: 24px;'>🐱 Кот: {round(prediction['probabilities'][0] * 100)}%</p>"
+                        f"<p style='font-size: 24px;'>🐶 Собака: {round(prediction['probabilities'][1] * 100)}%</p>"
+                        f"<p style='font-size: 24px;'>🐼 Панда: {round(prediction['probabilities'][2] * 100)}%</p>"
+                        f"</div>",
+                        unsafe_allow_html=True
+                    )
+
+            if 'force_predict' in st.session_state:
+                del st.session_state.force_predict
