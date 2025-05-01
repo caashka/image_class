@@ -21,7 +21,9 @@ async def predict(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(contents))
     processed_image = preprocess_image(image)
     predictions = model.predict(processed_image)
-    predicted_class = int(np.argmax(predictions[0]))
+    classes = ['Кот', 'Собака', 'Панда']
+    predicted_class_num = int(np.argmax(predictions[0]))
+    predicted_class = classes[predicted_class_num]
     probabilities = predictions[0].tolist()
     return JSONResponse(content={"predicted_class": predicted_class, "probabilities": probabilities})
 
