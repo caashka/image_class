@@ -4,14 +4,15 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 import io
+import cv2
 
 app = FastAPI()
 model = tf.keras.models.load_model('best_model.h5')
 
 def preprocess_image(image):
-    image = image.resize((150, 150))  # Адаптируйте под ваш датасет
-    image = np.array(image) / 255.0
-    image = np.expand_dims(image, axis=0)
+    image = cv2.resize(image, (150, 150))
+    image = image.reshape((1, 150, 150, 3))
+    image = np.array(image, dtype="float32") / 255.0
     return image
 
 @app.post("/predict")
