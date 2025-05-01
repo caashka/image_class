@@ -56,11 +56,11 @@ if mode == "Загрузить изображение":
             with col2:
                 # Отображение предсказания с увеличенным шрифтом
                 st.markdown(
-                    f"<div style='display: flex;   flex-direction: column; flex-wrap: wrap;height: 500px;'>"
-                    f"<h1 style='font-size: 48px;'>Ваш класс - {prediction['predicted_class']}</h1>"
-                    f"<h2 style='font-size: 32px;'>Кот - {round(prediction['probabilities'][0] * 100)}%</h2>"
-                    f"<h2 style='font-size: 32px;'>Собака - {round(prediction['probabilities'][1] * 100)}%</h2>"
-                    f"<h2 style='font-size: 32px;'>Панда - {round(prediction['probabilities'][2] * 100)}%</h2>"
+                    f"<div style='display: flex; flex-direction: column; height: 280px;'>"
+                    f"<h1 style='font-size: 36px;'>Результат: {prediction['predicted_class']}</h1>"
+                    f"<p style='font-size: 24px;'>🐱 Кот: {round(prediction['probabilities'][0] * 100)}%</p>"
+                    f"<p style='font-size: 24px;'>🐶 Собака: {round(prediction['probabilities'][1] * 100)}%</p>"
+                    f"<p style='font-size: 24px;'>🐼 Панда: {round(prediction['probabilities'][2] * 100)}%</p>"
                     f"</div>",
                     unsafe_allow_html=True
                 )
@@ -109,14 +109,6 @@ elif mode == "Нарисовать изображение":
                 st.session_state.canvas_key += 1
                 st.session_state.history = []
                 st.session_state.history_index = -1
-        with col_btn2:
-            if st.button("← Назад") and st.session_state.history_index > 0:
-                st.session_state.history_index -= 1
-                st.session_state.canvas_key += 1
-        with col_btn3:
-            if st.button("Вперед →") and st.session_state.history_index < len(st.session_state.history) - 1:
-                st.session_state.history_index += 1
-                st.session_state.canvas_key += 1
 
         # Кнопка классификации при отключенном реальном времени
         if not realtime_update:
