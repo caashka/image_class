@@ -10,6 +10,7 @@ app = FastAPI()
 model = tf.keras.models.load_model('best_model.h5')
 
 def preprocess_image(image):
+    print(image)
     image = cv2.resize(image, (150, 150))
     image = image.reshape((1, 150, 150, 3))
     image = np.array(image, dtype="float32") / 255.0
