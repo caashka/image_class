@@ -108,7 +108,7 @@ elif mode == "Нарисовать изображение":
             with col2:
                 # Отображение предсказания с увеличенным шрифтом
                 st.markdown(
-                    f"<div style='display: flex; height: 500px;'>"
+                    f"<div style='display: flex;   flex-direction: column; flex-wrap: wrap;height: 500px;'>"
                     f"<h1 style='font-size: 48px;'>Ваш класс - {prediction['predicted_class']}</h1>"
                     f"<h2 style='font-size: 32px;'>Кот - {round(prediction['probabilities'][0] * 100)}%</h2>"
                     f"<h2 style='font-size: 32px;'>Собака - {round(prediction['probabilities'][1] * 100)}%</h2>"
