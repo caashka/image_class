@@ -128,7 +128,7 @@
 ## 🌐Развертывание
 
 - **Streamlit-приложение** -развернуто на Streamlit Cloud: [🔗ссылка](https://imageclass-casha.streamlit.app/)
-- **API** - развернуто на Render.com: [🔗ссылка](https://image-class-9vgx.onrender.com)
+- **API** - развернуто на Render.com: [🔗ссылка](https://cashka-classification-backend.hf.space)
 
 ## 🛠️Использование API
 Отправьте POST-запрос на /predict с файлом изображения.
