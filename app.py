@@ -118,7 +118,7 @@ elif mode == "Нарисовать изображение":
                 with col2:
                     st.markdown(
                         f"<div style='display: flex; flex-direction: column; height: 280px; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif;'>"
-                        f"<h1 style='font-size: 36px;'>Результат: {prediction['predicted_class']}</h1>"
+                        f"<h1 style='font-size: 36px;'>Результат: класс номер {prediction['predicted_class']}</h1>"
                         f"<p style='font-size: 24px;'>🐱 Кот: {round(prediction['probabilities'][0] * 100)}%</p>"
                         f"<p style='font-size: 24px;'>🐶 Собака: {round(prediction['probabilities'][1] * 100)}%</p>"
                         f"<p style='font-size: 24px;'>🐼 Панда: {round(prediction['probabilities'][2] * 100)}%</p>"
